@@ -1,0 +1,79 @@
+configs:
+  pgadmin_servers:
+    file: ./docker/pgadmin/servers.json
+  pgadmin_pgpass:
+    content: "erp-postgres:5432:*:${POSTGRES_USER}:${POSTGRES_PASSWORD}"
+
+services:
+
+  postgres:
+
+    image: postgres:17
+
+    container_name: erp-postgres
+
+    restart: unless-stopped
+
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+
+    ports:
+      - "5432:5432"
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/postgres/init:/docker-entrypoint-initdb.d
+
+  pgadmin:
+
+    image: dpage/pgadmin4:9.17
+
+    container_name: erp-pgadmin
+
+    restart: unless-stopped
+
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD}
+      
+    configs:
+      - source: pgadmin_servers
+        target: /pgadmin4/servers.json
+        mode: 0444
+      - source: pgadmin_pgpass
+        target: /pgpass/pgpassfile
+        mode: 0400
+
+    ports:
+      - "8080:80"
+
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+
+  backend:
+
+    build:
+      context: ./backend
+
+    user: "${UID}:${GID}"
+
+    container_name: erp-backend
+
+    restart: unless-stopped
+
+    volumes:
+      - ./backend:/app
+
+    ports:
+      - "8000:8000"
+
+    env_file:
+      - .env
+
+volumes:
+
+  postgres_data:
+
+  pgadmin_data:
