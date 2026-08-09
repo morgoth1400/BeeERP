@@ -1,0 +1,30 @@
+[tool.ruff]
+line-length = 100
+target-version = "py313"
+extend-exclude = [
+    "alembic/versions",
+]
+
+[tool.ruff.lint]
+select = [
+    "E",    # pycodestyle errors
+    "F",    # pyflakes
+    "I",    # isort
+    "UP",   # pyupgrade
+    "B",    # flake8-bugbear
+    "SIM",  # flake8-simplify
+    "C4",   # flake8-comprehensions
+]
+ignore = [
+    "E501",    # line too long (lo gestiona ruff format)
+    "ANN401",  # permite el uso de typing.Any cuando sea necesario
+]
+
+[tool.ruff.lint.per-file-ignores]
+"app/tests/*" = ["ANN"]  # no exigir type hints completos en los tests
+
+[tool.ruff.lint.isort]
+known-first-party = ["app"]
+
+[tool.ruff.format]
+quote-style = "double"

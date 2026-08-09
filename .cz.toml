@@ -2,9 +2,9 @@
 name = "cz_customize"
 
 [tool.commitizen.customize]
-message_template = "{{change_type}}({{scope}}): {{message}}"
+message_template = "{{change_type}}{% if scope %}({{scope}}){% endif %}: {{message}}"
 schema = "<type>(<scope>): <description>"
-schema_pattern = "^(feat|fix|refactor|test|docs|chore|build|ci)\\((docker|db|model|repository|service|schema|api|auth|frontend|dev|ci|docs)\\): .+$"
+schema_pattern = "^(feat|fix|refactor|test|docs|chore|build|ci)(\\((docker|db|model|alembic|repository|service|schema|api|auth|frontend|dev|ci|docs)\\))?: .+$"
 
 [[tool.commitizen.customize.questions]]
 type = "list"
@@ -24,10 +24,12 @@ choices = [
 [[tool.commitizen.customize.questions]]
 type = "list"
 name = "scope"
-message = "Select the scope"
+message = "Select the scope (optional)"
 choices = [
+    { value = "", name = "(no scope)" },
     { value = "docker", name = "docker" },
     { value = "db", name = "db" },
+    { value = "alembic", name = "alembic" },
     { value = "model", name = "model" },
     { value = "repository", name = "repository" },
     { value = "service", name = "service" },
