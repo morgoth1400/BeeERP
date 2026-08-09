@@ -1,0 +1,64 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - '**'
+
+jobs:
+  ruff:
+    name: Lint (ruff)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      - name: Install ruff
+        run: pip install ruff
+
+      - name: Run ruff check
+        run: ruff check .
+
+      - name: Run ruff format check
+        run: ruff format --check .
+
+  commitizen:
+    name: Validate commit messages (commitizen)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          # Se necesita el historial completo para poder comparar
+          # el rango de commits que trae este push.
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      - name: Install commitizen
+        run: pip install commitizen
+
+      - name: Check commit messages
+        run: |
+          BEFORE="${{ github.event.before }}"
+          AFTER="${{ github.event.after }}"
+          ZERO_SHA="0000000000000000000000000000000000000000"
+
+          if [ "$BEFORE" = "$ZERO_SHA" ]; then
+            # Push a una rama nueva (sin "before" real): valida solo
+            # el último commit para no arrastrar todo el historial previo.
+            cz check --rev-range "${AFTER}~1..${AFTER}"
+          else
+            cz check --rev-range "${BEFORE}..${AFTER}"
+          fi
