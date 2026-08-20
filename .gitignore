@@ -41,3 +41,5 @@ frontend/.flutter-plugins-dependencies
 /docker/pgadmin/data/
 /docker/pgadmin/servers.json
 
+# Scripts personales
+/scripts/
