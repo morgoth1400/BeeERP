@@ -1,7 +1,12 @@
+from typing import TYPE_CHECKING
+
 from sqlalchemy import Date, Integer, String, Text
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base
+
+if TYPE_CHECKING:
+    from app.models.order import Order
 
 
 class Customer(Base):
@@ -9,6 +14,9 @@ class Customer(Base):
 
     def __repr__(self):
         return f"Customer(id={self.customer_id}, name='{self.name}', last_name='{self.last_name}')"
+
+    # RELATIONSHIPS
+    orders: Mapped[list["Order"]] = relationship(back_populates="customer")
 
     # ATTRIBUTES
     id: Mapped[int] = mapped_column(Integer, primary_key=True)

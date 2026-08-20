@@ -1,9 +1,14 @@
 from decimal import Decimal
+from typing import TYPE_CHECKING
 
 from sqlalchemy import ForeignKey, Integer, Numeric
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base
+
+if TYPE_CHECKING:
+    from app.models.order import Order
+    from app.models.product import Product
 
 
 class OrderLine(Base):
@@ -11,6 +16,11 @@ class OrderLine(Base):
 
     def __repr__(self):
         return f"OrderLine(id={self.id}, order_id={self.order_id}, product_id={self.product_id})"
+
+    # RELATIONSHIPS
+    order: Mapped["Order"] = relationship(back_populates="order_lines")
+
+    product: Mapped["Product"] = relationship(back_populates="order_lines")
 
     # ATTRIBUTES
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
