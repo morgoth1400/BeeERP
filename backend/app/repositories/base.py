@@ -5,8 +5,6 @@ from app.db.base import Base
 
 
 class BaseRepository[ModelType: Base]:
-    """Generic CRUD repository for a SQLAlchemy model."""
-
     model: type[ModelType]
 
     def __init__(self, db: Session):
