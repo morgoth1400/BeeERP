@@ -1,6 +1,7 @@
 from sqlalchemy import select
 
-from app.models.customer import Customer, Order
+from app.models.customer import Customer
+from app.models.order import Order
 from app.repositories.base import BaseRepository
 
 
